@@ -3,7 +3,8 @@ let tablaDatosRx = document.querySelector('#tablaDatosRx');
 let tablaDatosTx = document.querySelector('#tablaDatosTx');
 let contenedorDatos = document.querySelector('#contenedorDatos');
 let datoMedidorActual =1;
-let cadenaUnida=['-1','-1','-1','-1','-1'];
+let cadenaUnida=['-1'];
+let contador = 0;
 
 
 
@@ -12,22 +13,19 @@ let cadenaUnida=['-1','-1','-1','-1','-1'];
 const compararDatos = async () => {
     
     try{
-        let response = await fetch('http://calefaccionredimec.ddns.net:1888/medidor');
+        let response = await fetch('http://192.168.0.161:1880/medidor');
         if(response.ok){
             let datosMedidor = await response.json();
             datoMedidorComparar = datosMedidor.data;
             if (datoMedidorActual != datoMedidorComparar){
                 let dataTranslated = window.atob(datoMedidorComparar);
                 unificacionDeCadena(dataTranslated);
+ 		        console.log(dataTranslated)
                 console.log('Cadena Unida:\r\n'+cadenaUnida)
-                
-                let incluyeValor = cadenaUnida.includes('-1')
-
-                if (!incluyeValor){
+		        console.log('contador: '+contador)
+                if (contador==4){
                     cargarDatos(cadenaUnida);
                 }
-            
-  
                 datoMedidorActual = datoMedidorComparar;
             }
             
@@ -45,7 +43,7 @@ const compararDatos = async () => {
 
 const cargarDatos = async (cadenaUnida) =>{
     try{
-        let response = await fetch('http://calefaccionredimec.ddns.net:1888/medidor');
+        let response = await fetch('http://192.168.0.161:1880/medidor');
         if(response.ok){
             let datosMedidor= await response.json();
             let datos;
@@ -106,9 +104,13 @@ setInterval(() => {
 
 const unificacionDeCadena = (cadena) => {
     if (cadena.charAt(10) =='0') {
-        cadenaUnida = ['-1','-1','-1','-1','-1'];
+	contador = 0;
+	for (let i=1; i<=contador; i++) {
+        cadenaUnida[i] = '';
+	}
         cadenaUnida[cadena.charAt(10)] = cadena;
-    } else if (cadenaUnida[0]!='-1' && (cadenaUnida[0].substring(1,9))==cadena.substring(1,9)) {
+    } else if (cadenaUnida[0]!='' &&(cadenaUnida[0].substring(1,9))==cadena.substring(1,9)) {
+        contador = cadena.charAt(10);
         cadenaUnida[cadena.charAt(10)] = cadena.substring(12);
     } 
 }
