@@ -10,17 +10,15 @@ let ipAdress = '';
 let dispActivos = new Array();
 let dispSelec = '';
 
-let dispositivoActivo = '01 - Redimec';
+let dispositivoActivo = '';
 
 btnIP.addEventListener ('click', ()=>{
-    
     ipAdress = inputIP.value;
     console.log(ipAdress)
     setInterval(() => {
         compararDatos();
     }, 1000);
 })
-
 
 //Agregar toma de dato de numero de paquete dependiendo de la hora del dia, bug
 //Agregar toma de dato de numero de paquete dependiendo de la hora del dia, bug
@@ -36,7 +34,7 @@ let contador = 0;
 const mostrarDispositivosActivos = (nombreDispositivo) => {
     if (!dispActivos.includes(nombreDispositivo)){
         dispActivos.push(nombreDispositivo)
-        tablaDispActivos.innerHTML += `<button type="button" id=${nombreDispositivo} class="list-group-item list-group-item-action">${nombreDispositivo}</button>`
+        tablaDispActivos.innerHTML += `<button type="button" id="${nombreDispositivo}" class="list-group-item list-group-item-action" onclick="setButton(${nombreDispositivo})">${nombreDispositivo}</button>`
     }
 }   
 
