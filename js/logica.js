@@ -2,6 +2,21 @@ let tablaDatosGenerales = document.querySelector('#tablaDatosGenerales');
 let tablaDatosRx = document.querySelector('#tablaDatosRx');
 let tablaDatosTx = document.querySelector('#tablaDatosTx');
 let contenedorDatos = document.querySelector('#contenedorDatos');
+let inputIP = document.querySelector('#inputIP');
+let btnIP = document.querySelector('#btn-IP')
+
+let ipAdress = '';
+
+
+
+btnIP.addEventListener ('click', ()=>{
+
+    ipAdress = inputIP.value;
+    console.log(ipAdress)
+
+})
+
+
 let datoMedidorActual =1;
 let cadenaUnida=['-1'];
 let contador = 0;
@@ -13,7 +28,8 @@ let contador = 0;
 const compararDatos = async () => {
     
     try{
-        let response = await fetch('http://192.168.0.161:1880/medidor');
+        //let response = await fetch(`calefaccionredimec.ddns.net:1888/medidor`);
+        let response = await fetch(`${ipAdress}`);
         if(response.ok){
             let datosMedidor = await response.json();
             datoMedidorComparar = datosMedidor.data;
@@ -43,7 +59,7 @@ const compararDatos = async () => {
 
 const cargarDatos = async (cadenaUnida) =>{
     try{
-        let response = await fetch('http://192.168.0.161:1880/medidor');
+        let response = await fetch(`${ipAdress}`);
         if(response.ok){
             let datosMedidor= await response.json();
             let datos;
