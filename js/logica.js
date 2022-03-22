@@ -10,7 +10,7 @@ let ipAdress = '';
 let dispActivos = new Array();
 let dispSelec = '';
 
-let dispositivoActivo = '';
+let dispositivoActivo;
 
 btnIP.addEventListener ('click', ()=>{
     ipAdress = inputIP.value;
@@ -19,6 +19,8 @@ btnIP.addEventListener ('click', ()=>{
         compararDatos();
     }, 1000);
 })
+
+
 
 //Agregar toma de dato de numero de paquete dependiendo de la hora del dia, bug
 //Agregar toma de dato de numero de paquete dependiendo de la hora del dia, bug
@@ -31,16 +33,32 @@ let datoMedidorActual =1;
 let cadenaUnida=['-1'];
 let contador = 0;
 
-const mostrarDispositivosActivos = (nombreDispositivo) => {
-    if (!dispActivos.includes(nombreDispositivo)){
-        dispActivos.push(nombreDispositivo)
-        tablaDispActivos.innerHTML += `<button type="button" id="${nombreDispositivo}" class="list-group-item list-group-item-action" onclick="setButton(${nombreDispositivo})">${nombreDispositivo}</button>`
+const mostrarDispositivosActivos = (nombreDispositivo,macDispositivo) => {
+    if (!dispActivos.includes(macDispositivo)){
+        dispActivos.push(macDispositivo)
+        console.log(dispActivos)
+        tablaDispActivos.innerHTML += `<button id="btn-${macDispositivo}" class="list-group-item list-group-item-action" onClick="filtrarPorNombre('${macDispositivo}')" >${nombreDispositivo}</button>`
     }
 }   
 
 
-const filtrarDispositivo = (nombreDispositivo,dataDispositivo) => {
-    if (nombreDispositivo == dataDispositivo.deviceName) {
+const filtrarPorNombre = (macDispositivo) => {
+    dispositivoActivo = macDispositivo;
+    console.log(dispositivoActivo)
+    let btnDispositivoActivo = document.querySelector(`#btn-${macDispositivo}`)
+/* 
+    let btnSeleccionados = document.querySelectorAll('.active')
+   
+   
+    for (let i=0; i<=btnSeleccionados.length; i++){
+        btnSeleccionados[i].classList.remove('active')
+    }
+ */
+   // btnDispositivoActivo.classList.add('active')
+}
+
+const filtrarDispositivo = (macDispositivo,dataDispositivo) => {
+    if (macDispositivo == dataDispositivo.devEUI) {
         return true;
     } else {
         return false
@@ -58,7 +76,7 @@ const compararDatos = async () => {
             datoMedidorComparar = datosMedidor.data;
             if (datoMedidorActual != datoMedidorComparar){
                 let dataTranslated = window.atob(datoMedidorComparar);
-                mostrarDispositivosActivos(datosMedidor.deviceName);
+                mostrarDispositivosActivos(datosMedidor.deviceName,datosMedidor.devEUI);
                 if (filtrarDispositivo(dispositivoActivo,datosMedidor)){ 
                     unificacionDeCadena(dataTranslated);
                     console.log(dataTranslated)
