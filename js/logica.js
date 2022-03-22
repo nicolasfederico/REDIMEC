@@ -4,25 +4,50 @@ let tablaDatosTx = document.querySelector('#tablaDatosTx');
 let contenedorDatos = document.querySelector('#contenedorDatos');
 let inputIP = document.querySelector('#inputIP');
 let btnIP = document.querySelector('#btn-IP')
+let tablaDispActivos = document.querySelector('#dispositivosActivos')
 
 let ipAdress = '';
+let dispActivos = new Array();
+let dispSelec = '';
 
-
+let dispositivoActivo = '01 - Redimec';
 
 btnIP.addEventListener ('click', ()=>{
-
+    
     ipAdress = inputIP.value;
     console.log(ipAdress)
-
+    setInterval(() => {
+        compararDatos();
+    }, 1000);
 })
+
+
+//Agregar toma de dato de numero de paquete dependiendo de la hora del dia, bug
+//Agregar toma de dato de numero de paquete dependiendo de la hora del dia, bug
+//Agregar toma de dato de numero de paquete dependiendo de la hora del dia, bug
+//Agregar toma de dato de numero de paquete dependiendo de la hora del dia, bug
+//Agregar toma de dato de numero de paquete dependiendo de la hora del dia, bug
 
 
 let datoMedidorActual =1;
 let cadenaUnida=['-1'];
 let contador = 0;
 
+const mostrarDispositivosActivos = (nombreDispositivo) => {
+    if (!dispActivos.includes(nombreDispositivo)){
+        dispActivos.push(nombreDispositivo)
+        tablaDispActivos.innerHTML += `<button type="button" id=${nombreDispositivo} class="list-group-item list-group-item-action">${nombreDispositivo}</button>`
+    }
+}   
 
 
+const filtrarDispositivo = (nombreDispositivo,dataDispositivo) => {
+    if (nombreDispositivo == dataDispositivo.deviceName) {
+        return true;
+    } else {
+        return false
+    }
+}
 
 
 const compararDatos = async () => {
@@ -35,12 +60,15 @@ const compararDatos = async () => {
             datoMedidorComparar = datosMedidor.data;
             if (datoMedidorActual != datoMedidorComparar){
                 let dataTranslated = window.atob(datoMedidorComparar);
-                unificacionDeCadena(dataTranslated);
- 		        console.log(dataTranslated)
-                console.log('Cadena Unida:\r\n'+cadenaUnida)
-		        console.log('contador: '+contador)
-                if (contador==4){
-                    cargarDatos(cadenaUnida);
+                mostrarDispositivosActivos(datosMedidor.deviceName);
+                if (filtrarDispositivo(dispositivoActivo,datosMedidor)){ 
+                    unificacionDeCadena(dataTranslated);
+                    console.log(dataTranslated)
+                    console.log('Cadena Unida:\r\n'+cadenaUnida)
+                    console.log('contador: '+contador)
+                    if (contador==4){
+                        cargarDatos(cadenaUnida);
+                    }
                 }
                 datoMedidorActual = datoMedidorComparar;
             }
@@ -101,7 +129,6 @@ const cargarDatos = async (cadenaUnida) =>{
             tablaDatosGenerales.innerHTML += datos;
             tablaDatosRx.innerHTML += datosRx;
             tablaDatosTx.innerHTML += datosTx; 
-            contenedorDatos.innerHTML = cadenaUnida;
         }
         else{
             tablaDatosGenerales.innerHTML="<h1>Error - Failed URL!</h1>";
@@ -113,9 +140,6 @@ const cargarDatos = async (cadenaUnida) =>{
 }
 
 
-setInterval(() => {
-    compararDatos();
-}, 1000);
 
 
 const unificacionDeCadena = (cadena) => {
@@ -130,3 +154,8 @@ const unificacionDeCadena = (cadena) => {
         cadenaUnida[cadena.charAt(10)] = cadena.substring(12);
     } 
 }
+
+const filtroMedidor = () => {
+
+}
+
