@@ -21,14 +21,6 @@ btnIP.addEventListener ('click', ()=>{
 })
 
 
-
-//Agregar toma de dato de numero de paquete dependiendo de la hora del dia, bug
-//Agregar toma de dato de numero de paquete dependiendo de la hora del dia, bug
-//Agregar toma de dato de numero de paquete dependiendo de la hora del dia, bug
-//Agregar toma de dato de numero de paquete dependiendo de la hora del dia, bug
-//Agregar toma de dato de numero de paquete dependiendo de la hora del dia, bug
-
-
 let datoMedidorActual =1;
 let cadenaUnida=['-1'];
 let contador = 0;
@@ -69,7 +61,6 @@ const filtrarDispositivo = (macDispositivo,dataDispositivo) => {
 const compararDatos = async () => {
     
     try{
-        //let response = await fetch(`calefaccionredimec.ddns.net:1888/medidor`);
         let response = await fetch(`${ipAdress}`);
         if(response.ok){
             let datosMedidor = await response.json();
@@ -83,7 +74,7 @@ const compararDatos = async () => {
                     console.log('Cadena Unida:\r\n'+cadenaUnida)
                     console.log('contador: '+contador)
                     if (contador==4){
-                        cargarDatos(cadenaUnida);
+                        cargarDatos(cadenaUnida.join(''));
                     }
                 }
                 datoMedidorActual = datoMedidorComparar;
@@ -113,7 +104,7 @@ const cargarDatos = async (cadenaUnida) =>{
             `<tr>
                 <td>${datosMedidor.applicationID}</td>
                 <td>${datosMedidor.applicationName}</td>
-                <td>${cadenaUnida}</td>
+                <td>${cadenaUnida.split('\r\n').join('<br>')}</td>
                 <td>${datosMedidor.devEUI}</td>
                 <td>${datosMedidor.deviceName}</td>
                 <td>${datosMedidor.fCnt}</td>
@@ -144,7 +135,7 @@ const cargarDatos = async (cadenaUnida) =>{
 
             tablaDatosGenerales.innerHTML += datos;
             tablaDatosRx.innerHTML += datosRx;
-            tablaDatosTx.innerHTML += datosTx; 
+            tablaDatosTx.innerHTML += datosTx;
         }
         else{
             tablaDatosGenerales.innerHTML="<h1>Error - Failed URL!</h1>";
@@ -159,19 +150,15 @@ const cargarDatos = async (cadenaUnida) =>{
 
 
 const unificacionDeCadena = (cadena) => {
-    if (cadena.charAt(10) =='0') {
+    let posicion=(cadena.indexOf('-'))+1
+    if (cadena.charAt(posicion) =='0') {
 	contador = 0;
 	for (let i=1; i<=contador; i++) {
         cadenaUnida[i] = '';
 	}
-        cadenaUnida[cadena.charAt(10)] = cadena;
-    } else if (cadenaUnida[0]!='' &&(cadenaUnida[0].substring(1,9))==cadena.substring(1,9)) {
-        contador = cadena.charAt(10);
-        cadenaUnida[cadena.charAt(10)] = cadena.substring(12);
+        cadenaUnida[cadena.charAt(posicion)] = cadena;
+    } else if (cadenaUnida[0]!='' &&(cadenaUnida[0].substring(1,(posicion-1)))==cadena.substring(1,posicion-1)) {
+        contador = cadena.charAt(posicion);
+        cadenaUnida[cadena.charAt(posicion)] = cadena.substring(posicion+2);
     } 
 }
-
-const filtroMedidor = () => {
-
-}
-
