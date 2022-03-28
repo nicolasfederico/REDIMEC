@@ -5,6 +5,7 @@ let contenedorDatos = document.querySelector('#contenedorDatos');
 let inputIP = document.querySelector('#inputIP');
 let btnIP = document.querySelector('#btn-IP')
 let tablaDispActivos = document.querySelector('#dispositivosActivos')
+let textoCard = document.querySelector('#textoCard')
 
 let ipAdress = '';
 let dispActivos = new Array();
@@ -17,13 +18,11 @@ btnIP.addEventListener ('click', ()=>{
     console.log(ipAdress)
     setInterval(() => {
         compararDatos();
-    }, 1000);
+    }, 250);
 })
 
 
 let datoMedidorActual =1;
-let cadenaUnida=['-1'];
-let contador = 0;
 
 const mostrarDispositivosActivos = (nombreDispositivo,macDispositivo) => {
     if (!dispActivos.includes(macDispositivo)){
@@ -69,17 +68,11 @@ const compararDatos = async () => {
                 let dataTranslated = window.atob(datoMedidorComparar);
                 mostrarDispositivosActivos(datosMedidor.deviceName,datosMedidor.devEUI);
                 if (filtrarDispositivo(dispositivoActivo,datosMedidor)){ 
-                    unificacionDeCadena(dataTranslated);
                     console.log(dataTranslated)
-                    console.log('Cadena Unida:\r\n'+cadenaUnida)
-                    console.log('contador: '+contador)
-                    if (contador==4){
-                        cargarDatos(cadenaUnida.join(''));
-                    }
+                    cargarDatos(dataTranslated);
                 }
                 datoMedidorActual = datoMedidorComparar;
-            }
-            
+            } 
         }
         else{
             tablaDatosGenerales.innerHTML="<h1>Error - Failed URL!</h1>";
@@ -92,7 +85,7 @@ const compararDatos = async () => {
 
 
 
-const cargarDatos = async (cadenaUnida) =>{
+const cargarDatos = async (dataTranslated) =>{
     try{
         let response = await fetch(`${ipAdress}`);
         if(response.ok){
@@ -104,7 +97,6 @@ const cargarDatos = async (cadenaUnida) =>{
             `<tr>
                 <td>${datosMedidor.applicationID}</td>
                 <td>${datosMedidor.applicationName}</td>
-                <td>${cadenaUnida.split('\r\n').join('<br>')}</td>
                 <td>${datosMedidor.devEUI}</td>
                 <td>${datosMedidor.deviceName}</td>
                 <td>${datosMedidor.fCnt}</td>
@@ -112,7 +104,8 @@ const cargarDatos = async (cadenaUnida) =>{
             </tr>` 
             
 
-            datosRx = `<tr>
+            datosRx = 
+            `<tr>
             <td>${datosMedidor.rxInfo[0].altitude}</td>
             <td>${datosMedidor.rxInfo[0].latitude}</td>
             <td>${datosMedidor.rxInfo[0].loRaSNR}</td>
@@ -124,7 +117,8 @@ const cargarDatos = async (cadenaUnida) =>{
             </tr>` 
             
 
-            datosTx = `<tr>
+            datosTx = 
+            `<tr>
             <td>${datosMedidor.txInfo.adr}</td>
             <td>${datosMedidor.txInfo.codeRate}</td>
             <td>${datosMedidor.txInfo.dataRate.bandwidth}</td>
@@ -134,8 +128,9 @@ const cargarDatos = async (cadenaUnida) =>{
             </tr>` 
 
             tablaDatosGenerales.innerHTML += datos;
-            tablaDatosRx.innerHTML += datosRx;
-            tablaDatosTx.innerHTML += datosTx;
+            tablaDatosRx.innerHTML = datosRx;
+            tablaDatosTx.innerHTML = datosTx;
+            textoCard.innerHTML = `${dataTranslated.split('|').join('<br>')}`
         }
         else{
             tablaDatosGenerales.innerHTML="<h1>Error - Failed URL!</h1>";
@@ -149,7 +144,7 @@ const cargarDatos = async (cadenaUnida) =>{
 
 
 
-const unificacionDeCadena = (cadena) => {
+/* const unificacionDeCadena = (cadena) => {
     let posicion=(cadena.indexOf('-'))+1
     if (cadena.charAt(posicion) =='0') {
 	contador = 0;
@@ -161,4 +156,4 @@ const unificacionDeCadena = (cadena) => {
         contador = cadena.charAt(posicion);
         cadenaUnida[cadena.charAt(posicion)] = cadena.substring(posicion+2);
     } 
-}
+} */
