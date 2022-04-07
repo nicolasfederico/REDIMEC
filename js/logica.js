@@ -24,6 +24,27 @@ btnIP.addEventListener ('click', ()=>{
 
 let datoMedidorActual =1;
 
+const convertirATimestamp = (valorUnix) => {
+    const unixTimestamp = valorUnix
+
+    const milliseconds = unixTimestamp * 1000 // 1575909015000
+
+    const dateObject = new Date(milliseconds)
+
+    return dateObject.toLocaleString() //2019-12-9 10:30:15
+
+ /*    dateObject.toLocaleString("en-US", {weekday: "long"}) // Monday
+    dateObject.toLocaleString("en-US", {month: "long"}) // December
+    dateObject.toLocaleString("en-US", {day: "numeric"}) // 9
+    dateObject.toLocaleString("en-US", {year: "numeric"}) // 2019
+    dateObject.toLocaleString("en-US", {hour: "numeric"}) // 10 AM
+    dateObject.toLocaleString("en-US", {minute: "numeric"}) // 30
+    dateObject.toLocaleString("en-US", {second: "numeric"}) // 15
+    dateObject.toLocaleString("en-US", {timeZoneName: "short"}) // 12/9/2019, 10:30:15 AM CST */
+}
+
+
+
 const mostrarDispositivosActivos = (nombreDispositivo,macDispositivo) => {
     if (!dispActivos.includes(macDispositivo)){
         dispActivos.push(macDispositivo)
@@ -130,7 +151,10 @@ const cargarDatos = async (dataTranslated) =>{
             tablaDatosGenerales.innerHTML += datos;
             tablaDatosRx.innerHTML = datosRx;
             tablaDatosTx.innerHTML = datosTx;
-            textoCard.innerHTML = `${dataTranslated.split('|').join('<br>')}`
+            let ArrayData = dataTranslated.split('|')
+            ArrayData[0] = convertirATimestamp(ArrayData[0])
+            textoCard.innerHTML = `${ArrayData.join('<br>')}`
+            console.log (dataTranslated.split('|'))
         }
         else{
             tablaDatosGenerales.innerHTML="<h1>Error - Failed URL!</h1>";
